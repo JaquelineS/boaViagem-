@@ -1,6 +1,7 @@
 package br.edu.usj.boaviagem;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -20,9 +21,15 @@ public class DashboardActivity extends Activity {
     }
 
     public void selecionarOpcao(View view) {
-        TextView textView = (TextView) view;
-        String opcao = "Opção: "+textView.getText().toString();
-        Toast.makeText(this, opcao, Toast.LENGTH_LONG).
-                show();
+        switch (view.getId()){
+            case R.id.idnova_viagem:
+                startActivity(new Intent(
+                        this, NovaViagemActivity.class));
+                break;
+            case R.id.idnovo_gasto:
+                startActivity(new Intent(
+                        this, NovoGastoActivity.class));
+                break;
+        }
     }
 }
