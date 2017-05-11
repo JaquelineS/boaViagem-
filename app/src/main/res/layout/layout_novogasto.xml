@@ -35,6 +35,18 @@
 
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/categoria"/>
+        <Spinner
+            android:id="@+id/idcategoria"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:prompt="@string/categoria">
+
+        </Spinner>
+
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -64,6 +76,33 @@
             </TableRow>
 
         </TableLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/descricao"/>
+        <EditText
+            android:id="@+id/iddescricao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/local"/>
+        <EditText
+            android:id="@+id/idlocal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="registrarGasto"
+            android:text="@string/salvar"/>
+
 
     </LinearLayout>
 

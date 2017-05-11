@@ -30,6 +30,10 @@ public class DashboardActivity extends Activity {
                 startActivity(new Intent(
                         this, NovoGastoActivity.class));
                 break;
+            case R.id.idminhas_viagens:
+                startActivity(new Intent(
+                        this, ViagemListActivity.class));
+                break;
         }
     }
 }
