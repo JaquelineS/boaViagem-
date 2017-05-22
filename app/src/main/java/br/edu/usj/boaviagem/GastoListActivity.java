@@ -1,6 +1,7 @@
 package br.edu.usj.boaviagem;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -26,6 +27,8 @@ import java.util.Map;
 public class GastoListActivity extends ListActivity {
 
     private List<Map<String, Object>> gastos;
+
+    private String dataAnterior = "";
 
     private AdapterView.OnItemClickListener listener =
             new AdapterView.OnItemClickListener() {
@@ -60,6 +63,7 @@ public class GastoListActivity extends ListActivity {
                 de,
                 para);
 
+        adapter.setViewBinder(new GastoViewBinder());
         setListAdapter(adapter);
         ListView listView = getListView();
         listView.setOnItemClickListener(listener);
@@ -86,5 +90,33 @@ public class GastoListActivity extends ListActivity {
         gastos.add(item);
 
         return gastos;
+    }
+
+    private class GastoViewBinder implements SimpleAdapter.ViewBinder{
+
+        @Override
+        public boolean setViewValue(View view, Object data, String texto) {
+
+            if(view.getId() == R.id.iddata){
+                if(!dataAnterior.equals(data)){
+                    TextView textView = (TextView) view;
+                    textView.setText(texto);
+                    dataAnterior = texto;
+                    view.setVisibility(View.VISIBLE);
+                }
+                else{
+                    view.setVisibility(View.GONE);
+                }
+                return true;
+            }
+
+            if(view.getId() == R.id.idcategoria){
+                Integer id = (Integer) data;
+                view.setBackgroundColor(getResources().getColor(id));
+                return true;
+            }
+
+            return false;
+        }
     }
 }
