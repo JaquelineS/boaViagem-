@@ -23,6 +23,7 @@
     <string name="descricao">Descrição</string>
     <string name="local">Local</string>
     <string name="categoria">Categoria</string>
+    <string name="imagem">Imagem</string>
     <string-array name="categoria_gasto">
         <item>Alimentação</item>
         <item>Combustível</item>
