@@ -1,6 +1,8 @@
 package br.edu.usj.boaviagem;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -27,22 +29,47 @@ import java.util.Map;
 public class GastoListActivity extends ListActivity {
 
     private List<Map<String, Object>> gastos;
+    private AlertDialog menu;
+    private AlertDialog caixaConfirmacao;
+    private int gastoSelecionado;
 
     private String dataAnterior = "";
 
     private AdapterView.OnItemClickListener listener =
             new AdapterView.OnItemClickListener() {
                 @Override
-                public void onItemClick(AdapterView<?> adapterView,
+                public void onItemClick(AdapterView<?>
+                                                adapterView,
                                         View view, int position,
                                         long id) {
-                    Map<String, Object> mapa = gastos.get(position);
-                    String descricao = (String) mapa.get("descricao");
+                    gastoSelecionado = position;
+                    menu.show();
+                }
+            };
 
-                    String mensagem = "Gasto selecionado "+descricao;
+    private DialogInterface.OnClickListener listenerMenu =
+            new DialogInterface.OnClickListener() {
 
-                    Toast.makeText(getApplicationContext(), mensagem,
-                            Toast.LENGTH_SHORT).show();
+                @Override
+                public void onClick(DialogInterface dialogInterface,
+                                    int item) {
+                    switch (item){
+                        case 0:
+                            startActivity(
+                                    new Intent(getApplicationContext(),
+                                            NovoGastoActivity.class));
+                            break;
+                        case 1:
+                            caixaConfirmacao.show();
+                            break;
+                        case DialogInterface.BUTTON_POSITIVE:
+                            gastos.remove(gastoSelecionado);
+                            getListView().invalidateViews();
+                            break;
+                        case DialogInterface.BUTTON_NEGATIVE:
+                            caixaConfirmacao.dismiss();
+                            break;
+                    }
                 }
             };
 
@@ -67,6 +94,9 @@ public class GastoListActivity extends ListActivity {
         setListAdapter(adapter);
         ListView listView = getListView();
         listView.setOnItemClickListener(listener);
+
+        this.menu = criarAlertDialog();
+        this.caixaConfirmacao = criarConfirmacaoDialog();
     }
 
     private List<Map<String, Object>> listarGastos(){
@@ -92,10 +122,34 @@ public class GastoListActivity extends ListActivity {
         return gastos;
     }
 
+    private AlertDialog criarAlertDialog(){
+        final CharSequence[] items = {
+                getString(R.string.editar),
+                getString(R.string.remover)
+        };
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(this);
+        builder.setTitle(R.string.opcoes);
+        builder.setItems(items, listenerMenu);
+
+        return builder.create();
+    }
+
+    private AlertDialog criarConfirmacaoDialog(){
+
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(this);
+        builder.setMessage(R.string.confirmacao_exclusao);
+        builder.setPositiveButton(R.string.sim, listenerMenu);
+        builder.setNegativeButton(R.string.nao, listenerMenu);
+        return builder.create();
+    }
+
     private class GastoViewBinder implements SimpleAdapter.ViewBinder{
 
         @Override
-        public boolean setViewValue(View view, Object data, String texto) {
+        public boolean setViewValue(View view, Object data,
+                                    String texto) {
 
             if(view.getId() == R.id.iddata){
                 if(!dataAnterior.equals(data)){

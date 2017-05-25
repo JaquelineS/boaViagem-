@@ -24,6 +24,18 @@
     <string name="local">Local</string>
     <string name="categoria">Categoria</string>
     <string name="imagem">Imagem</string>
+    <string name="editar">Editar</string>
+    <string name="gastos_realizados">Gastos Realizados</string>
+    <string name="remover">Remover</string>
+    <string name="opcoes">Opções</string>
+    <string name="confirmacao_exclusao">Você deseja realmente excluir?</string>
+    <string name="sim">Sim</string>
+    <string name="nao">Não</string>
+    <string name="modo_viagem">Modo Viagem</string>
+    <string name="modo_viagem_sumario">Determina a viagem ativa com base na data atual</string>
+    <string name="informe_valor_limite">Informe o valor limite</string>
+    <string name="valor_limite_sumario">Notifica quando os gastos ultrapassarem o percentual informado</string>
+    <string name="valor_limite">Valor Limite</string>
     <string-array name="categoria_gasto">
         <item>Alimentação</item>
         <item>Combustível</item>

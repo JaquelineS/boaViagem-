@@ -1,6 +1,8 @@
 package br.edu.usj.boaviagem;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,6 +24,9 @@ import java.util.Map;
 public class ViagemListActivity extends ListActivity {
 
     private List<Map<String, Object>> viagens;
+    private AlertDialog menu;
+    private AlertDialog caixaConfirmacao;
+    private int viagemSelecionada;
 
     private AdapterView.OnItemClickListener listener =
             new AdapterView.OnItemClickListener() {
@@ -30,17 +35,44 @@ public class ViagemListActivity extends ListActivity {
                                                 adapterView,
                                         View view, int position,
                                         long id) {
+                    viagemSelecionada = position;
+                    menu.show();
+                }
+            };
 
-                    Map<String, Object> mapa =
-                            viagens.get(position);
+    private DialogInterface.OnClickListener listenerMenu =
+            new DialogInterface.OnClickListener() {
 
-                    String destino = (String) mapa.get("destino");
-                    String mensagem = "Viagem selecionada "+destino;
-                    Toast.makeText(getApplicationContext(),
-                            mensagem,
-                            Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(getApplicationContext(),
-                            GastoListActivity.class));
+                @Override
+                public void onClick(DialogInterface dialogInterface,
+                        int item) {
+                    switch (item){
+                        case 0:
+                            startActivity(
+                                    new Intent(getApplicationContext(),
+                                        NovaViagemActivity.class));
+                            break;
+                        case 1:
+                            startActivity(
+                                    new Intent(getApplicationContext(),
+                                            NovoGastoActivity.class));
+                            break;
+                        case 2:
+                            startActivity(
+                                    new Intent(getApplicationContext(),
+                                            GastoListActivity.class));
+                            break;
+                        case 3:
+                            caixaConfirmacao.show();
+                            break;
+                        case DialogInterface.BUTTON_POSITIVE:
+                            viagens.remove(viagemSelecionada);
+                            getListView().invalidateViews();
+                            break;
+                        case DialogInterface.BUTTON_NEGATIVE:
+                            caixaConfirmacao.dismiss();
+                            break;
+                    }
                 }
             };
 
@@ -65,6 +97,9 @@ public class ViagemListActivity extends ListActivity {
         setListAdapter(adapter);
         ListView listView = getListView();
         listView.setOnItemClickListener(listener);
+
+        this.menu = criarAlertDialog();
+        this.caixaConfirmacao = criarConfirmacaoDialog();
     }
 
     private List<Map<String, Object>> listarViagens(){
@@ -88,5 +123,30 @@ public class ViagemListActivity extends ListActivity {
         viagens.add(item);
 
         return viagens;
+    }
+
+    private AlertDialog criarAlertDialog(){
+        final CharSequence[] items = {
+                getString(R.string.editar),
+                getString(R.string.novo_gasto),
+                getString(R.string.gastos_realizados),
+                getString(R.string.remover)
+        };
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(this);
+        builder.setTitle(R.string.opcoes);
+        builder.setItems(items, listenerMenu);
+
+        return builder.create();
+    }
+
+    private AlertDialog criarConfirmacaoDialog(){
+
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(this);
+        builder.setMessage(R.string.confirmacao_exclusao);
+        builder.setPositiveButton(R.string.sim, listenerMenu);
+        builder.setNegativeButton(R.string.nao, listenerMenu);
+        return builder.create();
     }
 }
