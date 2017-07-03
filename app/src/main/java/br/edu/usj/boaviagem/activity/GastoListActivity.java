@@ -1,4 +1,4 @@
-package br.edu.usj.boaviagem;
+package br.edu.usj.boaviagem.activity;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -8,22 +8,24 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.edu.usj.boaviagem.R;
+import br.edu.usj.boaviagem.dao.GastoDAO;
+import br.edu.usj.boaviagem.dao.IGastoDAO;
+import br.edu.usj.boaviagem.dao.ViagemDAO;
+import br.edu.usj.boaviagem.entity.Gasto;
+
 /**
- * Created by rafael on 10/05/17.
+ * Created by jaqueline on 10/05/17.
  */
 
 public class GastoListActivity extends ListActivity {
@@ -32,6 +34,8 @@ public class GastoListActivity extends ListActivity {
     private AlertDialog menu;
     private AlertDialog caixaConfirmacao;
     private int gastoSelecionado;
+    private IGastoDAO gastoDAO;
+    public static final String ID_VIAGEM = "ID_VIAGEM";
 
     private String dataAnterior = "";
 
@@ -63,7 +67,9 @@ public class GastoListActivity extends ListActivity {
                             caixaConfirmacao.show();
                             break;
                         case DialogInterface.BUTTON_POSITIVE:
-                            gastos.remove(gastoSelecionado);
+                            if (gastoDAO.excluir((Integer) gastos.get(gastoSelecionado).get("id"))) {
+                                gastos.remove(gastoSelecionado);
+                            }
                             getListView().invalidateViews();
                             break;
                         case DialogInterface.BUTTON_NEGATIVE:
@@ -77,6 +83,8 @@ public class GastoListActivity extends ListActivity {
     protected void onCreate(
             @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        gastoDAO = new GastoDAO(getApplicationContext());
 
         gastos = listarGastos();
         String[] de = {"data", "descricao", "valor", "categoria"};
@@ -101,23 +109,33 @@ public class GastoListActivity extends ListActivity {
 
     private List<Map<String, Object>> listarGastos(){
 
-        List<Map<String, Object>> gastos =
-                new ArrayList<Map<String, Object>>();
+        Intent intent = getIntent();
+        int idViagem = intent.getIntExtra(ID_VIAGEM, 0);
 
-        Map<String, Object> item =
-                new HashMap<String, Object>();
-        item.put("data", "24/05/2017");
-        item.put("descricao", "Lanche");
-        item.put("valor", "R$ 20,00");
-        item.put("categoria", R.color.categoria_alimentacao);
-        gastos.add(item);
+        List<Map<String, Object>> gastos = new ArrayList<>();
+        for (Gasto gasto : gastoDAO.buscarPorViagemId(idViagem)) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("id", gasto.getId());
+            item.put("data", new SimpleDateFormat("dd/MM/yyyy").format(gasto.getData()));
+            item.put("descricao", gasto.getDescricao());
+            item.put("valor", String.format("R$ %s", gasto.getValor()));
 
-        item = new HashMap<String, Object>();
-        item.put("data", "31/05/2017");
-        item.put("descricao", "Hotel");
-        item.put("valor", "R$ 200,00");
-        item.put("categoria", R.color.categoria_hospedagem);
-        gastos.add(item);
+            switch (gasto.getCategoria()) {
+                case "Alimentação":
+                    item.put("categoria", R.color.categoria_alimentacao);
+                    break;
+                case "Transporte":
+                    item.put("categoria", R.color.categoria_transporte);
+                    break;
+                case "Hospedagem":
+                    item.put("categoria", R.color.categoria_hospedagem);
+                    break;
+                default:
+                    item.put("categoria", R.color.categoria_outros);
+                    break;
+            }
+            gastos.add(item);
+        }
 
         return gastos;
     }

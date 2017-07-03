@@ -1,15 +1,15 @@
-package br.edu.usj.boaviagem;
+package br.edu.usj.boaviagem.activity;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import br.edu.usj.boaviagem.R;
 
 /**
- * Created by rafael on 12/04/17.
+ * Created by jaqueline on 12/04/17.
  */
 
 public class DashboardActivity extends Activity {

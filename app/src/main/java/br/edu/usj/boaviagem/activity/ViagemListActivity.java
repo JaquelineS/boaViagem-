@@ -1,4 +1,4 @@
-package br.edu.usj.boaviagem;
+package br.edu.usj.boaviagem.activity;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -10,15 +10,20 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.edu.usj.boaviagem.R;
+import br.edu.usj.boaviagem.dao.IViagemDAO;
+import br.edu.usj.boaviagem.dao.ViagemDAO;
+import br.edu.usj.boaviagem.entity.Viagem;
+
 /**
- * Created by rafael on 10/05/17.
+ * Created by jaqueline on 10/05/17.
  */
 
 public class ViagemListActivity extends ListActivity {
@@ -27,6 +32,7 @@ public class ViagemListActivity extends ListActivity {
     private AlertDialog menu;
     private AlertDialog caixaConfirmacao;
     private int viagemSelecionada;
+    private IViagemDAO viagemDAO;
 
     private AdapterView.OnItemClickListener listener =
             new AdapterView.OnItemClickListener() {
@@ -48,25 +54,27 @@ public class ViagemListActivity extends ListActivity {
                         int item) {
                     switch (item){
                         case 0:
-                            startActivity(
-                                    new Intent(getApplicationContext(),
-                                        NovaViagemActivity.class));
+                            Intent intent = new Intent(getApplicationContext(), NovaViagemActivity.class);
+                            intent.putExtra(NovaViagemActivity.ID_VIAGEM, (Integer) viagens.get(viagemSelecionada).get("id"));
+                            startActivity(intent);
                             break;
                         case 1:
-                            startActivity(
-                                    new Intent(getApplicationContext(),
-                                            NovoGastoActivity.class));
+                            Intent intentGasto = new Intent(getApplicationContext(), NovoGastoActivity.class);
+                            intentGasto.putExtra(NovoGastoActivity.ID_VIAGEM, (Integer) viagens.get(viagemSelecionada).get("id"));
+                            startActivity(intentGasto);
                             break;
                         case 2:
-                            startActivity(
-                                    new Intent(getApplicationContext(),
-                                            GastoListActivity.class));
+                            Intent intentGastoList = new Intent(getApplicationContext(), GastoListActivity.class);
+                            intentGastoList.putExtra(GastoListActivity.ID_VIAGEM, (Integer) viagens.get(viagemSelecionada).get("id"));
+                            startActivity(intentGastoList);
                             break;
                         case 3:
                             caixaConfirmacao.show();
                             break;
                         case DialogInterface.BUTTON_POSITIVE:
-                            viagens.remove(viagemSelecionada);
+                            if (viagemDAO.excluir((Integer) viagens.get(viagemSelecionada).get("id"))) {
+                                viagens.remove(viagemSelecionada);
+                            }
                             getListView().invalidateViews();
                             break;
                         case DialogInterface.BUTTON_NEGATIVE:
@@ -76,11 +84,12 @@ public class ViagemListActivity extends ListActivity {
                 }
             };
 
+
     @Override
     protected void onCreate(
             @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        viagemDAO = new ViagemDAO(getApplicationContext());
         viagens = listarViagens();
 
         String[] de = {"imagem", "destino", "data", "total" };
@@ -104,23 +113,19 @@ public class ViagemListActivity extends ListActivity {
 
     private List<Map<String, Object>> listarViagens(){
 
-        List<Map<String, Object>> viagens
-                = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> viagens = new ArrayList<>();
 
-        Map<String, Object> item =
-                new HashMap<String, Object>();
-        item.put("imagem", R.drawable.negocios);
-        item.put("destino", "São José");
-        item.put("data", "17/05/2017 até o dia 24/05/2017");
-        item.put("total", "Gasto total R$ 300,00");
-        viagens.add(item);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
-        item = new HashMap<String, Object>();
-        item.put("imagem", R.drawable.lazer);
-        item.put("destino", "Palhoça");
-        item.put("data", "24/05/2017 até o dia 31/05/2017");
-        item.put("total", "Gasto total R$ 150,00");
-        viagens.add(item);
+        for (Viagem viagem : viagemDAO.listar()) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("id", viagem.getId());
+            item.put("imagem", "lazer".equalsIgnoreCase(viagem.getTipoViagem()) ? R.drawable.lazer : R.drawable.negocios);
+            item.put("destino", viagem.getDestino());
+            item.put("data", String.format("%s até o dia %s", dateFormat.format(viagem.getDataChegada()),dateFormat.format(viagem.getDataSaida())));
+            item.put("total", String.format("Gasto total R$ %s", viagem.getOrcamento()));
+            viagens.add(item);
+        }
 
         return viagens;
     }

@@ -1,4 +1,4 @@
-package br.edu.usj.boaviagem;
+package br.edu.usj.boaviagem.activity;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -13,8 +13,10 @@ import android.widget.Spinner;
 
 import java.util.Calendar;
 
+import br.edu.usj.boaviagem.R;
+
 /**
- * Created by rafael on 04/05/17.
+ * Created by jaqueline on 04/05/17.
  */
 
 public class NovoGastoActivity extends Activity {
@@ -22,6 +24,7 @@ public class NovoGastoActivity extends Activity {
     private int ano, mes, dia;
     private Button dataGasto;
     private Spinner categoria;
+    public static final String ID_VIAGEM = "ID_VIAGEM";
     private DatePickerDialog.OnDateSetListener listener =
             new DatePickerDialog.OnDateSetListener() {
                 @Override

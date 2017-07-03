@@ -9,7 +9,7 @@
         android:label="@string/app_name"
         android:theme="@android:style/Theme.NoTitleBar">
 
-        <activity android:name=".BoaViagemActivity"
+        <activity android:name=".activity.BoaViagemActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,17 +17,17 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".DashboardActivity" />
+        <activity android:name=".activity.DashboardActivity" />
 
-        <activity android:name=".NovaViagemActivity" />
+        <activity android:name=".activity.NovaViagemActivity" />
 
-        <activity android:name=".NovoGastoActivity" />
+        <activity android:name=".activity.NovoGastoActivity" />
 
-        <activity android:name=".ViagemListActivity" />
+        <activity android:name=".activity.ViagemListActivity" />
 
-        <activity android:name=".GastoListActivity" />
+        <activity android:name=".activity.GastoListActivity" />
 
-        <activity android:name=".ConfiguracoesActivity" />
+        <activity android:name=".activity.ConfiguracoesActivity" />
 
     </application>
 
